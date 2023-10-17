@@ -1,66 +1,29 @@
-from bs4 import BeautifulSoup
-import requests
-from django.db import models
-
-link = "https://www.estrategiaconcursos.com.br/blog/concursos-nordeste/#paraiba"
-req = requests.get(link)
-
-site = BeautifulSoup(req.text, "html.parser")
-
-PB = site.find_all("p", class_="has-very-light-gray-background-color has-background has-medium-font-size")
+import utils
 
 
-def get_status():
-    status = PB[0].find_next_sibling()
-    return status
-
-def get_nome():
-    nome = PB[0].text
-    return nome
-
-
-def get_perspectivas(status):
-    perspectivas = status.find_next_sibling()
-    return perspectivas
+class Concurso:
+    def __init__(self, nome, status, vagas, cargos, situacao):
+        self.nome = nome
+        self.status = status
+        self.vagas = vagas
+        self.cargos = cargos
+        self.situacao = situacao
 
 
-def get_cargos_vagas(perspectivas):
-    li_tags = perspectivas.find_next_sibling().find_next_sibling()
+listaConcursos = []
+for i in range(16):
 
-    cargos = None
-    vagas = None
-    for li in li_tags:
-        txt = li.text
-        trecho = txt.split(": ")
-        print(trecho)
-        if trecho[0] == "Cargos":
-            cargos = trecho[1]
+    nome = utils.get_nome(i)
+    status = utils.get_status(i)
+    vagas = utils.get_vagas(i)
+    cargos = utils.get_cargos(i)
+    situacao = utils.get_situacao(i)
 
-        if trecho[0].__contains__("Vagas"):
-            vagas = trecho[0]
+    concursoAtual = Concurso(nome, status, vagas, cargos, situacao)
+    listaConcursos.append(concursoAtual)
 
-    return cargos
-
-
-def get_link_concurso():
-    tag = PB[0].find_next("a")
-    link = tag.attrs.get("href")
-    return link
-
-def get_situacao(link):
-    req = requests.get(link)
-    site = BeautifulSoup(req.text, "html.parser")
-
-    div = site.find_all("ul", class_="has-very-light-gray-to-cyan-bluish-gray-gradient-background has-background")
-
-    for li in div:
-        txt = li.text
-        trecho = txt.split("\n")
-        print(trecho)
-        for i in range(len(trecho)):
-            if trecho[i].__contains__("Situação"):
-                situacao = trecho[i]
-                return situacao
-
-
+for i in range(16):
+    print(listaConcursos[i].nome)
+    print(listaConcursos[i].situacao)
+    print("//////////")
 
