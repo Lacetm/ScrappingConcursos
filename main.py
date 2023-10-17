@@ -14,6 +14,10 @@ def get_status():
     status = PB[0].find_next_sibling()
     return status
 
+def get_nome():
+    nome = PB[0].text
+    return nome
+
 
 def get_perspectivas(status):
     perspectivas = status.find_next_sibling()
@@ -34,6 +38,8 @@ def get_cargos_vagas(perspectivas):
 
         if trecho[0].__contains__("Vagas"):
             vagas = trecho[0]
+
+    return cargos
 
 
 def get_link_concurso():
